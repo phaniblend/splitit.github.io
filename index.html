@@ -44,59 +44,32 @@
     </div>
     <!-- Import Bootstrap's JavaScript bundle from CDN -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+
    <script>
-  function splitString() {
-    // Get the input string, character limit, and threshold
-    const inputString = document.getElementById('inputString').value;
-    const charLimit = parseInt(document.getElementById('charLimit').value);
-    const threshold = parseInt(document.getElementById('threshold').value);
+function splitString() {
+  // Get the input string and character limit
+  const inputString = document.getElementById('inputString').value;
+  const charLimit = parseInt(document.getElementById('charLimit').value);
 
-    // If the input string is shorter than the character limit, display it as is
-    if (inputString.length <= charLimit) {
-      const output = document.getElementById('output');
-      output.innerHTML = '';
-      const chunkElem = document.createElement('div');
-      chunkElem.textContent = inputString;
-      output.appendChild(chunkElem);
-      return;
-    }
+  // Get the prefix for the saved files
+  const filePrefix = document.getElementById('filePrefix').value || 'chunk';
 
-    // Split the input string into chunks of the specified length
-    const chunks = [];
-    let i;
-    for (i = 0; i < inputString.length - charLimit; i += charLimit) {
-      chunks.push(inputString.substr(i, charLimit));
-    }
-
-    // If the last chunk is shorter than the threshold, append it to the previous chunk
-    const lastChunk = inputString.substr(i);
-    if (lastChunk.length < threshold) {
-      chunks[chunks.length - 1] += lastChunk;
-    } else {
-      chunks.push(lastChunk);
-    }
-
-    // Display the split chunks on the page
-    const output = document.getElementById('output');
-    output.innerHTML = '';
-    for (let i = 0; i < chunks.length; i++) {
-      const chunk = chunks[i];
-      const chunkElem = document.createElement('div');
-      chunkElem.textContent = chunk;
-      output.appendChild(chunkElem);
-    }
-
-    // Alternate the background color of the split chunks
-    const chunkElems = document.querySelectorAll('#output div');
-    for (let i = 0; i < chunkElems.length; i++) {
-      const chunkElem = chunkElems[i];
-      if (i % 2 === 0) {
-        chunkElem.classList.add('bg-light');
-      } else {
-        chunkElem.classList.remove('bg-light');
-      }
-    }
+  // Split the input string into chunks of the specified length
+  const chunks = [];
+  for (let i = 0; i < inputString.length; i += charLimit) {
+    chunks.push(inputString.substr(i, charLimit));
   }
+
+  // Save each chunk as a separate file
+  for (let i = 0; i < chunks.length; i++) {
+    const chunk = chunks[i];
+    const blob = new Blob([chunk], { type: 'text/plain;charset=utf-8' });
+    const filename = `${filePrefix}_${i}.txt`;
+    saveAs(blob, filename);
+  }
+}
+
 </script>
     </body>
 </html>
